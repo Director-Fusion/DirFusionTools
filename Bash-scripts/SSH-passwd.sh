@@ -9,7 +9,7 @@
 #First you enter in your current password.
 #Second Enter your new password.
 
-#IP list.
+#IP list. CHANGE ME FOR YOUR NEEDS.
 IPs="/home/dirfusion/Desktop/IPs.txt"
 
 #User Name
