@@ -43,7 +43,7 @@ for server in $servers
 do
   ssh $server -l $user -t passwd
   echo -e "$current\r"
-  echo -e "$new"
-  echo -e "$new"
+  echo -e "$new\r"
+  echo -e "$new\r"
   echo -e "exit\r"
 done
