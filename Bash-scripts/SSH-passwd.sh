@@ -31,8 +31,8 @@ read -p "Press Enter to continue or Ctrl+C to cancel"
 echo -n "Enter your new-password: "
 read new
 
-#Verifies New password
-echo "Your current password is: $new, is this correct?"
+#Verifies the new password
+echo "Your new password is: $new, is this correct?"
 read -p "Press Enter to continue or Ctrl+C to cancel..."
 
 for IP in $(IPs)
