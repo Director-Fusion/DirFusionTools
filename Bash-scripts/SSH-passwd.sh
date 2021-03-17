@@ -10,7 +10,7 @@
 #Second Enter your new password.
 
 #IP list. CHANGE ME FOR YOUR NEEDS.
-IPs="/home/dirfusion/Desktop/IPs.txt"
+servers="/home/dirfusion/Desktop/IPs.txt"
 
 #User Name
 read -p "What is your user name?: " user
@@ -39,9 +39,9 @@ echo $new
 echo " is this correct?"
 read -p "Press Enter to continue or Ctrl+C to cancel..."
 
-for IP in $IPs
+for server in $servers
 do
-  ssh $IP -l $user -t passwd
+  ssh $server -l $user -t passwd
   echo -e "$current\r"
   echo -e "$new"
   echo -e "$new"
