@@ -22,7 +22,7 @@ read current
 
 #Verifys typed password
 echo "Your current password is: $current, is this correct?
-read -p "Press Enter to continue or Ctrl+C to cancel
+read -p "Press Enter to continue or Ctrl+C to cancel"
 
 #Takes input for new password
 echo -n "Enter your new-password: "
