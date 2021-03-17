@@ -1,0 +1,1 @@
+Get-NetGPO | select displayname,name,whenchanged

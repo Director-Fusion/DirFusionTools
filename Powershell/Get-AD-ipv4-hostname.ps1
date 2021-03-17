@@ -1,0 +1,1 @@
+get-ADComputer -filter * -properties ipv4address | where {$_.ipv4address} | select name,ipv4address

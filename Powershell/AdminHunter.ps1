@@ -1,0 +1,1 @@
+Get-NetGroupMember 'Domain-Admins' -Recurse
