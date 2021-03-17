@@ -39,7 +39,7 @@ echo $new
 echo " is this correct?"
 read -p "Press Enter to continue or Ctrl+C to cancel..."
 
-for IP in $(IPs)
+for IP in $IPs
 do
   ssh $IP -l $user -t passwd
   echo -e "$current\r"
