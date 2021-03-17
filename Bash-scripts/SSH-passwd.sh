@@ -42,8 +42,8 @@ read -p "Press Enter to continue or Ctrl+C to cancel..."
 for IP in $(IPs)
 do
   ssh $IP -l $user -t passwd
-  send $current
-  send $new
-  send $new
-  exit
+  echo $current
+  echo $new
+  echo $new
+  echo exit
 done
