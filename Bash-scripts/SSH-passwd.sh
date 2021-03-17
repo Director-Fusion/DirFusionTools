@@ -23,7 +23,7 @@ read user
 echo -n "Enter your current-password: "
 read current
 
-#Verifys typed password
+#Verifies typed password
 echo "Your current password is: $current, is this correct?"
 read -p "Press Enter to continue or Ctrl+C to cancel"
 
