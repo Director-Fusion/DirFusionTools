@@ -39,11 +39,13 @@ echo $new
 echo " is this correct?"
 read -p "Press Enter to continue or Ctrl+C to cancel..."
 
-for server in $(read servers)
-do
-  ssh $server -l $user -t passwd
-  echo -e "$current\r"
-  echo -e "$new\r"
-  echo -e "$new\r"
-  echo -e "exit\r"
+for server in $servers; do
+  while read line; 
+  do
+    ssh $server -l $user -t passwd
+    echo -e "$current\r"
+    echo -e "$new\r"
+    echo -e "$new\r"
+    echo -e "exit\r"
+  done
 done
