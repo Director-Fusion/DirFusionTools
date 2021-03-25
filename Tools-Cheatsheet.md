@@ -801,6 +801,113 @@ or
 " onload="alert(String.fromCharCode(88,83,83))
 
 ```
+# Active Directory Enumeration and Information Gathering
 
+## Windows domain enumeration & recon
 
+3 main ways
+
+Use a sniffer
+Through a non domain linux with no windows shell
+With a domain joined windows machine
+
+1. nbtscan -r <ip address range>
+
+2. nmap -sL <target or ip range> -Reverse DNS lookups.
+
+3. metasploit smb version module at:
+
+> use auxiliary/scanner/smb/smb_version
+
+Good for gethering host OS data as well.
+
+4. metasploit SNMP scanner
+
+> use auxiliary/scanner/snmp/snmp_login
+
+## Getting SNMP community string
+
+In SNMPv1 and SNMPv2 the string can be acquired through sniffing. 
+
+Ettercap can capture the community string through executing of a machine in the middle attack. With ettercap to do it you have to include the "-P" argument to have a PCAP file with it. 
+
+## MORE SNMP enumeration
+
+SNMPcheck download - http://www.nothink.org/codes/snmpcheck/
+
+> snmpcheck.pl -c community_string -t <ip address>
+
+Dig can be used in recon efforts to look at the Windows global catalog record to determine the DC addresses.
+
+> dig -t NS <domain name>
+
+or
+
+dig _gc. <domain name>
+
+## SMB domain enumeration
+
+> rpcclient -U username IPAddress
+
+```
+null session
+> rpcclient -U "" <IP address>
+```
+
+To get information off the remote server execute:
+
+> rpcclient $> srvinfo
+
+To enumerate domain user do:
+
+> rpcclient $> enumdomusers
+
+To enumerate domain and built in groups execute:
+
+> rpcclient $> enumalsgrouos domain
+> rpcclient $> enumalsgroups builtin
+
+To identify the SID of the the user or group
+
+> rpcclient $> lookupnames <username> or <groupname>
+
+Identify original admin on a machine:
+
+> rpcclient $> queryuser 500
+
+## Other tools to get similar results
+
+1. enum4linux - command
+
+> enum4linux <ipaddress>
+
+2. smbmap
+
+3. NMAP's smb nse script.
+
+> nmap --script=smb-enum-shares <ipaddress>
+
+### Enum all shares on a domain
+
+**Note you need credentials
+
+> smbclient -U "<domain>\<username>\<password>" -L <hostname>
+
+```
+Enumeratinng shares is critical as they often can contain critical information
+```
+
+### SRV records for the DC controller
+
+> nslookup -querytype=SRV _LDAP._TCP.DC._MSDCS.<domain name>
+
+## Powershell recon and enumeration
+
+DC discovery
+
+> [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain().DomainControllers
+
+DC Discovery
+
+> nltest /server:<ip of any member> /dclist:<domain name>
 
