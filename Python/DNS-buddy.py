@@ -25,7 +25,6 @@ parser = argparse.ArgumentParser(desription='Resolve DNS information')
 
 parser.add_argument('-f', '--file', dest='filename', metavar='FILE', required=False,
                     help='Text file to use for hostname or ip enumeration')
-
 parser.add_argument('-d', '--domain', dest='domain', metavar='DOMAIN', required=True,
                     help='Domain servers to find')
 parser.add_argument('-i', '--ip-address', dest='ip_address', metavar='ip_address',
