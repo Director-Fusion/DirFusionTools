@@ -17,53 +17,88 @@ import socket
 import os
 import sys
 import fileinput
+import argparse 
 from argparse import ArgumentParser
+import ipaddress
 
 #Variables Section
 
-parser = argparse.ArgumentParser(desription='Resolve DNS information')
+parser = argparse.ArgumentParser(description='Resolve DNS information')
 
-parser.add_argument('-f', '--file', dest='filename', metavar='FILE', required=False,
+parser.add_argument('-f', '--file', dest='file', metavar='FILE', required=False,
                     help='Text file to use for hostname or ip enumeration')
-parser.add_argument('-d', '--domain', dest='domain', metavar='DOMAIN', required=True,
+parser.add_argument('-d', '--domain', dest='domain', metavar='DOMAIN', required=False,
                     help='Domain servers to find')
 parser.add_argument('-i', '--ip-address', dest='ip_address', metavar='ip_address',
                     required=False, help='Pass IP address information')
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                     help='verbose mode')
 
-args = parser.parse_args()
 
-name = args.domain
-
-ip_address = args.ip_address
 
 #Functions
 
+"""
+print("file {} domain {} ip_address {} ".format(
+       args.file,
+       args.domain,
+       args.ip_address  
+       ))
+"""
+
 ## Working with input
 
-def reader(filename)
-    hosts = open(filename)
-    for host in hosts:
-        host.readline()
-    return hosts
-    
+args = parser.parse_args()
+
+#subnet = open(args.file, "r")
+
+name = args.domain
+
+addresses = str(ipaddress.ip_address(args.ip_address))#, strict=False)
+
 ## Convert hostname to IPv4/6
+"""
+def get_ip():
+    for subnet in subnets:
 
-def get_ip(
-    socket.gethostbyname(hosts)
-)
+        #print("current line: ", subnet.rstrip())
+    # IPv4
+        address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
+        print(subnet.rstrip(), address[0][4][0])
+       
+    # IPv6
+        try:    
+            address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+            print(subnet.rstrip(), address[0][4][0])
+            continue
+        except:
+           print("subnet: ", subnet.rstrip(), "IPv6 Error")
+"""
+def get_hostname():
+    #for address in addresses:
+    #IPv4
+        print(addresses)
+        hostname=socket.gethostbyaddr(addresses)[0]#, port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
+        print(hostname)
+    # IPv6   
+        """try:
+            print("Current IP: ", address)
+            hostname=socket.gethostbyaddr("addresses")#, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+            print(hostname)
+            continue    
+        except:
+            print("Unresolvable Address: ", address)
 
-def get_hostname(
-    socket.gethostbyaddr(ip_address)
-)
+def get_domainname():
+    for subnet in subnets:
+        resolved=socket.getfqdn(host.rstrip())
+        print(resolved)
 
-def get_domainname(
-    socket.getfqdn(name)
-)
+"""
 
 # Resolve requested data
 
-get_domainname
+#get_domainname()
+get_hostname()
 
-
+#get_ip()
