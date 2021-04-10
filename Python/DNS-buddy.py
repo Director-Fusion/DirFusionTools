@@ -31,6 +31,8 @@ parser.add_argument('-d', '--domain', dest='domain', metavar='DOMAIN', required=
                     help='Domain servers to find')
 parser.add_argument('-i', '--ip-address', dest='ip_address', metavar='ip_address',
                     required=False, help='Pass IP address information')
+parser.add_argument("-c", "--cidr", dest='cidr', metavar='CIDR', required=False,
+                    help='IP address range with CIDR notation')
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                     help='verbose mode')
 
@@ -54,7 +56,9 @@ args = parser.parse_args()
 
 name = args.domain
 
-addresses = str(ipaddress.ip_address(args.ip_address))#, strict=False)
+#addresses = str(ipaddress.ip_address(args.ip_address))
+
+cidr = ipaddress.ip_network(args.cidr, strict=False)
 
 ## Convert hostname to IPv4/6
 """
@@ -73,32 +77,50 @@ def get_ip():
             continue
         except:
            print("subnet: ", subnet.rstrip(), "IPv6 Error")
-"""
+
 def get_hostname():
-    #for address in addresses:
+    
     #IPv4
-        print(addresses)
-        hostname=socket.gethostbyaddr(addresses)[0]#, port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
-        print(hostname)
+    try:
+        hostname=socket.gethostbyaddr(addresses)[0]
+        print(hostname, addresses)
+    except:
+        print("IPv4 Unresolvable Address: ", address)
+
     # IPv6   
-        """try:
-            print("Current IP: ", address)
-            hostname=socket.gethostbyaddr("addresses")#, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
-            print(hostname)
-            continue    
-        except:
-            print("Unresolvable Address: ", address)
+    try:
+        hostname=socket.gethostbyaddr(addresses)[0]
+        print(hostname, addresses)   
+    except:
+        print("IPv6 Unresolvable Address: ", address)
 
 def get_domainname():
     for subnet in subnets:
         resolved=socket.getfqdn(host.rstrip())
         print(resolved)
-
 """
+
+def ranges():
+    for a in cidr:
+        #IPv4
+        try:
+            print(a)
+            hn = socket.gethostbyaddr(a)#, port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
+            print(hn)
+        except:
+            print("Unresolvable IPv4 Address:", a)
+      
+        #IPv6
+        try:   
+            print(a)
+            hn = socket.gethostbyaddr(a)#, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+            print(hn)
+        except:
+            print("Unresolvable IPv6 Address:", a)
 
 # Resolve requested data
 
 #get_domainname()
-get_hostname()
-
+#get_hostname()
 #get_ip()
+ranges()
