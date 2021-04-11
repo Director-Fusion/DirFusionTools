@@ -61,22 +61,23 @@ args = parser.parse_args()
 
 def get_ip():
     subnets = open(args.file, "r")
-    for subnet in subnets:
-        
+    for subnet in subnets:    
     # IPv4
         try:
             address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
-            print(subnet.rstrip(), address[0][4][0])
+            resolved=socket.getfqdn(subnet.rstrip())
+            print(subnet.rstrip(), address[0][4][0], resolved)
             continue
         except:
             print("subnet: ", subnet.rstrip(), "IPv4 Error")
     # IPv6
-        #try:    
-        address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
-        print(subnet.rstrip(), address[0][4][0])
-        #    continue
-        #except:
-        #   print("subnet: ", subnet.rstrip(), "IPv6 Error")
+        try:    
+            address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+            resolved=socket.getfqdn(subnet.rstrip())
+            print(subnet.rstrip(), address[0][4][0], resolved)
+            continue
+        except:
+            print("subnet: ", subnet.rstrip(), "IPv6 Error")
 
 ### Resolves hostname from individual IP address argument. i.e "-i 10.0.0.1"
 def get_hostname():
@@ -84,21 +85,26 @@ def get_hostname():
 #IPv4
     try:
         hostname=socket.getfqdn(addresses)
-        print(hostname, addresses)
+        resolved=socket.getfqdn(addresses.rstrip())
+        print(hostname, addresses, resolved)
     except:
         print("Unresolvable IP Address: ", addresses)
 #IPv6   
-#    try:
-#        hostname=socket.gethostbyaddr(addresses)[0]
-#        print(hostname, addresses)   
-#    except:
-#        print("Unresolvable IPv6 Address:: ", addresses)
+    try:
+        hostname=socket.gethostbyaddr(addresses)[0]
+        resolved=socket.getfqdn(addresses.rstrip())
+        print(hostname, addresses, resolved)   
+    except:
+        print("Unresolvable IPv6 Address:: ", addresses)
 
 ### Gets fully qualified domain name from domain name. i.e "-d google.com"
 def get_domainname():
     name = args.domain
     resolved=socket.getfqdn(name.rstrip())
-    print(resolved, name.rstrip())
+    addr=socket.getaddrinfo(name, port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
+    print(resolved, addr[0][4][0], name.rstrip())
+    addr=socket.getaddrinfo(name, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+    print(resolved, addr[0][4][0], name.rstrip())
 
 ### Handles CIDR argument by resolving eahc address in the network. i.e "-c 10.0.0.0/24"
 def ranges():
@@ -112,15 +118,16 @@ def ranges():
         except:    
             print("Unresolvable IP Address:", a)
         #IPv6 
-        #try:
-        #    hn = socket.getaddrinfo(str(a, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP))
-        #    print(hn, a)
-        #except:    
-        #    print("Unresolvable IPv6 Address:", a)
+        try:
+            hn = socket.getaddrinfo(str(a, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP))
+            print(hn, a)
+        except:    
+            print("Unresolvable IPv6 Address:", a)
 
 # Resolve requested data
 
 ## Figure out which argument is being used and execute the appropriate funciton
+
 print(header)
 if args.domain:
     get_domainname()
