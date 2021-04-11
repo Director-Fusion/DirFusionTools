@@ -14,12 +14,13 @@ reverse DNS lookup byt CIDR notation for IP 4 and 6 alike.
 """
 
 import socket
-import os
 import sys
 import fileinput
 import argparse 
 from argparse import ArgumentParser
 import ipaddress
+import netaddr
+from netaddr import IPNetwork,IPAddress
 
 #Variables Section
 
@@ -40,36 +41,23 @@ parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
 
 #Functions
 
-"""
-print("file {} domain {} ip_address {} ".format(
-       args.file,
-       args.domain,
-       args.ip_address  
-       ))
-"""
-
 ## Working with input
 
 args = parser.parse_args()
 
-#subnet = open(args.file, "r")
-
-name = args.domain
-
-#addresses = str(ipaddress.ip_address(args.ip_address))
-
-cidr = ipaddress.ip_network(args.cidr, strict=False)
-
 ## Convert hostname to IPv4/6
-"""
-def get_ip():
-    for subnet in subnets:
 
+def get_ip():
+    subnet = open(args.file, "r")
+    for subnet in subnets:
         #print("current line: ", subnet.rstrip())
     # IPv4
-        address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
-        print(subnet.rstrip(), address[0][4][0])
-       
+        try:
+            address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
+            print(subnet.rstrip(), address[0][4][0])
+            continue
+        except:
+            print("subnet: ", subnet.rstrip(), "IPv4 Error")
     # IPv6
         try:    
             address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
@@ -79,7 +67,7 @@ def get_ip():
            print("subnet: ", subnet.rstrip(), "IPv6 Error")
 
 def get_hostname():
-    
+    addresses = str(ipaddress.ip_address(args.ip_address))
     #IPv4
     try:
         hostname=socket.gethostbyaddr(addresses)[0]
@@ -95,27 +83,32 @@ def get_hostname():
         print("IPv6 Unresolvable Address: ", address)
 
 def get_domainname():
-    for subnet in subnets:
-        resolved=socket.getfqdn(host.rstrip())
-        print(resolved)
-"""
+    name = args.domain
+    resolved=socket.getfqdn(name.rstrip())
+    print(resolved)
 
 def ranges():
+    #cidr = ipaddress.ip_interface(str(args.cidr))
+    cidr = IPNetwork(args.cidr)
+    #ab=ipaddress.ip_network(cidr)
     for a in cidr:
+        a=ipaddress.ip_address(a)
         #IPv4
+        print(a),
         try:
-            print(a)
-            hn = socket.gethostbyaddr(a)#, port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
-            print(hn)
-        except:
+            hn = socket.gethostbyaddr(str(a)),
+            #hn = a.reverse_dns
+            print(hn),    
+        except:    
             print("Unresolvable IPv4 Address:", a)
-      
-        #IPv6
-        try:   
-            print(a)
-            hn = socket.gethostbyaddr(a)#, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+
+        #IPv6 
+        print(a),
+        try:
+            hn = socket.gethostbyaddr(str(a)),
+        #hn= a.reverse_dns
             print(hn)
-        except:
+        except:    
             print("Unresolvable IPv6 Address:", a)
 
 # Resolve requested data
