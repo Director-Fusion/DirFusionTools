@@ -71,22 +71,22 @@ def get_ip():
         except:
             print("subnet: ", subnet.rstrip(), "IPv4 Error")
     # IPv6
-        try:    
-            address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
-            print(subnet.rstrip(), address[0][4][0])
-            continue
-        except:
-           print("subnet: ", subnet.rstrip(), "IPv6 Error")
+        #try:    
+        address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
+        print(subnet.rstrip(), address[0][4][0])
+        #    continue
+        #except:
+        #   print("subnet: ", subnet.rstrip(), "IPv6 Error")
 
 ### Resolves hostname from individual IP address argument. i.e "-i 10.0.0.1"
 def get_hostname():
     addresses = str(ipaddress.ip_address(args.ip_address))
 #IPv4
     try:
-        hostname=socket.gethostbyaddr(addresses)[0]
+        hostname=socket.getfqdn(addresses)
         print(hostname, addresses)
     except:
-        print("Unresolvable IPv4 Address: ", addresses)
+        print("Unresolvable IP Address: ", addresses)
 #IPv6   
 #    try:
 #        hostname=socket.gethostbyaddr(addresses)[0]
@@ -107,10 +107,10 @@ def ranges():
         #IPv4
         try:
             hn = socket.gethostbyaddr(str(a))[0]
-            print(hn, a)  
-        except:    
-            print("Unresolvable IPv4 Address:", a)
+            print(hn, a)
             continue
+        except:    
+            print("Unresolvable IP Address:", a)
         #IPv6 
         #try:
         #    hn = socket.getaddrinfo(str(a, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP))
