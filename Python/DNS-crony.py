@@ -12,23 +12,16 @@ import fileinput
 import argparse 
 from argparse import ArgumentParser
 import ipaddress
-import multiprocessing
+import threading
 
 # Header
 
-header = ("""\
-                                                                               
-@@@@@@@   @@@  @@@   @@@@@@    @@@@@@@  @@@@@@@    @@@@@@   @@@  @@@  @@@ @@@  
-@@@@@@@@  @@@@ @@@  @@@@@@@   @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@ @@@  @@@ @@@  
-@@!  @@@  @@!@!@@@  !@@       !@@       @@!  @@@  @@!  @@@  @@!@!@@@  @@! !@@  
-!@!  @!@  !@!!@!@!  !@!       !@!       !@!  @!@  !@!  @!@  !@!!@!@!  !@! @!!  
-@!@  !@!  @!@ !!@!  !!@@!!    !@!       @!@!!@!   @!@  !@!  @!@ !!@!   !@!@!   
-!@!  !!!  !@!  !!!   !!@!!!   !!!       !!@!@!    !@!  !!!  !@!  !!!    @!!!   
-!!:  !!!  !!:  !!!       !:!  :!!       !!: :!!   !!:  !!!  !!:  !!!    !!:    
-:!:  !:!  :!:  !:!      !:!   :!:       :!:  !:!  :!:  !:!  :!:  !:!    :!:    
- :::: ::   ::   ::  :::: ::    ::: :::  ::   :::  ::::: ::   ::   ::     ::    
-:: :  :   ::    :   :: : :     :: :: :   :   : :   : :  :   ::    :      :     
-                                                                               
+header = ("""                                                                               
+    ____   _   _______  ______ ____   ____   _   __ __  __
+   / __ \ / | / // ___// ____// __ \ / __ \ / | / / \ \/ /
+  / / / //  |/ / \__ \/ /    / /_/ // / / //  |/ /   \  / 
+ / /_/ // /|  /___/ // /__ // /_,_// /_/ //  /| /    / /  
+/_____//_/ |_//____/\____/ /_/ |_| \____//_/ |_/    /_/                                                                                
 """)
 
 #Arguments Section
@@ -66,16 +59,14 @@ def get_ip():
     # IPv4
         try:
             address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
-            resolved=socket.getfqdn(subnet.rstrip())
-            print(subnet.rstrip(), address[0][4][0], resolved)
+            print(subnet.rstrip(), address[0][4][0])
             continue
         except:
             print("subnet: ", subnet.rstrip(), "IPv4 Error")
     # IPv6
         try:    
             address=socket.getaddrinfo(subnet.rstrip(), port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP)
-            resolved=socket.getfqdn(subnet.rstrip())
-            print(subnet.rstrip(), address[0][4][0], resolved)
+            print(subnet.rstrip(), address[0][4][0])
             continue
         except:
             print("subnet: ", subnet.rstrip(), "IPv6 Error")
@@ -109,8 +100,8 @@ def get_domainname():
 
 ### Handles CIDR argument by resolving eahc address in the network. i.e "-c 10.0.0.0/24"
 def ranges():
-    cidr = ipaddress.ip_network(args.cidr, strict=False)
-    for a in cidr:
+    #cidr = ipaddress.ip_network(args.cidr, strict=False)
+    for a in ipaddress.ip_network(args.cidr, strict=False):
         #IPv4
         try:
             hn = socket.gethostbyaddr(str(a))[0]
@@ -118,38 +109,38 @@ def ranges():
             continue
         except:    
             print("Unresolvable IPv4 Address:", a)
-        #IPv6 
+"""       #IPv6 
         try:
             hn = socket.gethostbyaddr(str(a))[0]
             print(hn, a)
         except:    
             print("Unresolvable IPv6 Address:", a)
-
+"""
 # Resolve requested data
 
 ## Figure out which argument is being used and execute the appropriate funciton
 
-#def resolve():
-print(header)
-if args.domain:
-    get_domainname()
-elif args.ip_address:
-    get_hostname()
-elif args.file:
-    get_ip()
-elif args.cidr:
-    ranges()
-else: 
-    sys.exit()
+def resolve():
+    print(header)
+    if args.domain:
+        get_domainname()
+    elif args.ip_address:
+        get_hostname()
+    elif args.file:
+        get_ip()
+    elif args.cidr:
+        ranges()
+    else: 
+        sys.exit()
+    
+resolve()
 
-#resolve()
-"""
 # Threading/Multiprocessing
 
 jobs = []
+t = threading.Thread(target=resolve)
 
 for i in range(10):
-    t = multiprocessing.Process(target=resolve)
     jobs.append(t)
 
 for i in range(10):
@@ -157,4 +148,3 @@ for i in range(10):
 
 for i in range(10):
     jobs[i].join()
-"""    
