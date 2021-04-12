@@ -120,7 +120,7 @@ def ranges():
             print("Unresolvable IPv4 Address:", a)
         #IPv6 
         try:
-            hn = socket.getaddrinfo(str(a, port=0, family=socket.AF_INET6, proto=socket.IPPROTO_TCP))
+            hn = socket.gethostbyaddr(str(a))[0]
             print(hn, a)
         except:    
             print("Unresolvable IPv6 Address:", a)
@@ -129,22 +129,22 @@ def ranges():
 
 ## Figure out which argument is being used and execute the appropriate funciton
 
-def resolve():
-    print(header)
-    if args.domain:
-        get_domainname()
-    elif args.ip_address:
-        get_hostname()
-    elif args.file:
-        get_ip()
-    elif args.cidr:
-        ranges()
-    else: 
-        sys.exit()
+#def resolve():
+print(header)
+if args.domain:
+    get_domainname()
+elif args.ip_address:
+    get_hostname()
+elif args.file:
+    get_ip()
+elif args.cidr:
+    ranges()
+else: 
+    sys.exit()
 
-resolve()
-
-# Threading
+#resolve()
+"""
+# Threading/Multiprocessing
 
 jobs = []
 
@@ -157,3 +157,4 @@ for i in range(10):
 
 for i in range(10):
     jobs[i].join()
+"""    
