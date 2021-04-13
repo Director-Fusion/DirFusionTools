@@ -1,0 +1,4 @@
+google.com
+yahoo.com
+microsoft.com
+example.org
