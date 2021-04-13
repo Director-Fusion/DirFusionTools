@@ -48,7 +48,7 @@ This will return IP address information. Which can also be used to perform a rev
 
 nslookup can also query mail exchange servers. 
 
-> nslookup -type=MX < www.website.com >
+> d< www.website.com >
 
 Zone transfers can be identified with the following command.
 
