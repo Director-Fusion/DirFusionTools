@@ -1,14 +1,6 @@
-use dns_lookup::getnameinfo;
-use std::net::{IpAddr, SocketAddr};
+use dns_lookup::lookup_addr;
 
-    let ip: IpAddr = "127.0.0.1".parse().unwrap();
-    let port = 0;
-    let socket: SocketAddr = (ip, port).into();
+let ip: std::net::IpAddr = "127.0.0.1".parse().unwrap();
+let host = lookup_addr(&ip).unwrap();
 
-    let (name, service) = match getnameinfo(&socket, 0) {
-      Ok((n, s)) => (n, s),
-      Err(e) => panic!("Failed to lookup socket {:?}", e),
-    };
-
-println!("{:?} {:?}", name, service);
-    let _ = (name, service);
+// The string "localhost" on unix, and the hostname on Windows.

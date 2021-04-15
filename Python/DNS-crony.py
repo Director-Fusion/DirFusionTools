@@ -12,7 +12,7 @@ import fileinput
 import argparse 
 from argparse import ArgumentParser
 import ipaddress
-import threading
+import multiprocessing as mp
 
 # Header
 
@@ -99,29 +99,35 @@ def get_domainname():
     print(resolved, addr[0][4][0], name.rstrip())
 
 ### Handles CIDR argument by resolving eahc address in the network. i.e "-c 10.0.0.0/24"
-def ranges():
-    #cidr = ipaddress.ip_network(args.cidr, strict=False)
+def net():
     for a in ipaddress.ip_network(args.cidr, strict=False):
-        #IPv4
+    #IPv4
         try:
+            format(ipaddress.IPv4Address(a))
             hn = socket.gethostbyaddr(str(a))[0]
             print(hn, a)
+            jobs.join()
             continue
         except:    
             print("Unresolvable IPv4 Address:", a)
-"""       #IPv6 
+    #IPv6 
         try:
+            format(ipaddress.IPv6Address(a))
             hn = socket.gethostbyaddr(str(a))[0]
             print(hn, a)
+            jobs.join()
         except:    
             print("Unresolvable IPv6 Address:", a)
-"""
+
+
 # Resolve requested data
 
 ## Figure out which argument is being used and execute the appropriate funciton
 
 def resolve():
-    print(header)
+    
+    print(header)  
+    num_threads = input("How many threads would you like: ")  
     if args.domain:
         get_domainname()
     elif args.ip_address:
@@ -129,22 +135,16 @@ def resolve():
     elif args.file:
         get_ip()
     elif args.cidr:
-        ranges()
+        net()
     else: 
         sys.exit()
-    
+
 resolve()
 
-# Threading/Multiprocessing
+if __name__ == '__main__':
+    # Threading/Multiprocessing
+    resolve()
 
-jobs = []
-t = threading.Thread(target=resolve)
-
-for i in range(10):
-    jobs.append(t)
-
-for i in range(10):
-    jobs[i].start()
-
-for i in range(10):
-    jobs[i].join()
+    for x in range(num_threads):
+        jobs = mp.Process(target=net)
+        jobs.start()
