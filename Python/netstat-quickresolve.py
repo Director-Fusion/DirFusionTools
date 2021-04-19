@@ -11,13 +11,13 @@ import re
 
 def resolve():
     # Net is a powershell equivalent of netstat finding established connections and filtering out the ipv4 addresses.
-    net = sp.check_output(['powershell.exe', 'Get-NetTCPConnection', '-state', 'ESTABLISHED', '|', 'format-list', '|', 'grep', "'RemoteAddress'", '|', 'Select-String', '-Pattern', "'\d+\.\d+\.\d+\.\d+'", '|', 'cut', '-d', "':'", '-f' '2', '|', 'grep', '-v', '127.0.0.1'])
+    net = sp.check_output(['powershell.exe', 'Get-NetTCPConnection', '-state', 'ESTABLISHED', '|', 'format-list', '|', 'Select-String', "'RemoteAddress'", '|', 'Select-String', '-Pattern', "'\d+\.\d+\.\d+\.\d+'", '|', 'cut', '-d', "':'", '-f' '2', '|', 'Select-String', '-NotMatch', '127.0.0.1'])
     out_put = net.decode('utf-8').splitlines()
     #print(out_put)
     out_put = sorted(out_put)
     out_put = list(filter(None, out_put))
-    out_put = 
     print(out_put)
+    
     for a in out_put:
         a = ip.IPv4Address(str(a))
         print(a)
