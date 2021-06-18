@@ -1135,7 +1135,23 @@ The same thing can be done with metasploits mssql_ping module.
 
 > Get-SQLInstanceScanUDP
 
+## Keeping a session if losing SSH
 
+1. Screen
+
+> screen -S <screen name> -t <screen name> -L
+
+List all screens to attach
+
+> screen -ls
+
+Attach Screen
+
+> screen -r
+
+Detach Screen
+
+> screen -d
 
 
 
