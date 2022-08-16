@@ -1,0 +1,23 @@
+{
+  "name": "cybersecnews",
+  "version": "1.0.0",
+  "description": "Cyber Security News API Scraper",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "Cyber",
+    "Cyber",
+    "Security",
+    "News"
+  ],
+  "author": "Cory Keller",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
+    "express": "^4.17.1",
+    "jquery": "^3.6.0"
+  }
+}

@@ -1,0 +1,7 @@
+401        0l        0w        0c https://reporting-aistoapi.cat.com/home
+401        0l        0w        0c https://reporting-aistoapi.cat.com/Home
+200        1l        3w      795c https://reporting-aistoapi.cat.com/hc
+200        1l        1w     1691c https://reporting-aistoapi.cat.com/monitoring
+401        0l        0w        0c https://reporting-aistoapi.cat.com/HOME
+200        1l        1w     1691c https://reporting-aistoapi.cat.com/Monitoring
+200        1l        3w      795c https://reporting-aistoapi.cat.com/HC
