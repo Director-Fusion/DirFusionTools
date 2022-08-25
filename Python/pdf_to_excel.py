@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, filename="pdf-to-excel.log", filemode="
 def get_emails():
     
     logging.info("Searching Attachments")
-    os.chdir(r'/Users/corykeller/Documents/AutoMate-The-Boring-Stuff')
+    os.chdir(r'PATH INFO HERE')
     ezgmail.init()
     results = ezgmail.search('meetingminutes.pdf')
     attachment = results[0].messages[0].attachments
