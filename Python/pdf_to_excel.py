@@ -11,6 +11,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG, filename="pdf-to-excel.log", filemode="w", format="%(asctime)s - %(levelname)s - %(message)s")
 
 def get_emails():
+    
     logging.info("Searching Attachments")
     os.chdir(r'/Users/corykeller/Documents/AutoMate-The-Boring-Stuff')
     ezgmail.init()
@@ -23,49 +24,46 @@ def get_emails():
     distribute(attachment)
 
 def distribute(attachment):
+    
     logging.info("Inside Distribute")
     os.chdir('/tmp')
     getPDF(attachment)      
         
 def getPDF(attachment):    
-    logging.info("Inside GetPDF")
-    attachment = str(attachment)
-    pdfFileObj = open(attachment, 'rb')
+   
+    pdfFileObj = attachment
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-    
+        
     for i in range(0, pdfReader.numPages):
         pgObj = pdfReader.getPage(i)
         pageData = pgObj.extractText()
-        re_extraction(pageData)
-    
-    pdfFileObj.close()
-       
+        re_extraction(pageData)   
+         
 def re_extraction(pageData):
+    
     logging.info('Inside RE-extract')
     contract_dict = r'Contractor: (.+?)\s*$'
     matches = re.finditer(contract_dict, pageData, re.MULTILINE)
     
-    for matchNum, match in enumerate(matches, start=1):
-    
-        print ("Match {matchNum} was found at {start}-{end}: {match}".format(matchNum = matchNum, start = match.start(), end = match.end(), match = match.group()))
-    
+    for matchNum, match in enumerate(matches, start=1):   
         for groupNum in range(0, len(match.groups())):
             groupNum = groupNum + 1
-        
-            print ("Group {groupNum} found at {start}-{end}: {group}".format(groupNum = groupNum, start = match.start(groupNum), end = match.end(groupNum), group = match.group(groupNum)))
-    
-        exportExcel(match)
+            groups = match.groups(groupNum)
+            print(groups)
+            exportExcel(groups)
 
-def exportExcel(match):
+def exportExcel(groups):
+    
     logging.info("Exporting to Excel")
     wb = openpyxl.Workbook() # New Blank WorkBook
     wb.sheetnames # First sheet
     boe_sheet = wb.active
     boe_sheet.title = 'The Board of Education'
-    boe_sheet['A1'] = match
-    boe_sheet['B2'] = match
-    boe_sheet['A2'] = str('Fuck you')
-    wb.save('boetest.xlsx') # Save the Workbook
-    wb.close()
+    
+    for group in groups:
+        boe_sheet.append(group)
+        
+    wb.save('boetest.xlsx')
+    wb.close() 
     
 get_emails()
