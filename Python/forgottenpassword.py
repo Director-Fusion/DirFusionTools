@@ -31,5 +31,5 @@ data = {
   'userName': 'test'
 }
 
-#response = requests.post('https://clslp.cat.com/tbr/main/forgotPassword.html', headers=headers, cookies=cookies, data=data, verify=False)
+#response = requests.post('https://XXXXXXXXXXXX.com/forgotPassword.html', headers=headers, cookies=cookies, data=data, verify=False)
 #print(bs4(response.content))
