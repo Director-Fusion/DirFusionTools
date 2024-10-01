@@ -11,7 +11,7 @@ while read user_pass_pair; do
 u=$(echo $user_pass_pair | cut -d ":" -f 1)
 p=$(echo $user_pass_pair | cut -d ":" -f 2)
 sleep 2
-./vpn -s connect 198.206.246.225 <<STDIN 
+./vpn -s connect <IP ADDRESS> <<STDIN 
 y
 $u
 $p
