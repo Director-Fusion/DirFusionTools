@@ -5,8 +5,8 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 cookies = {
-    '$Cookie: 85698974155bb6892604ef972ddb2cdd': '61be3513c4407fbead5dd4747708fee3',
-    'JSESSIONID': '_LMcJpie1z8oRM-3LuehAv9HopyZp6ZAxn__TsvroHRT2g4ZDSma\\u00211701208557',
+    '$Cookie: DATA',
+    'JSESSIONID': 'DATA',
 }
 
 headers = {
@@ -23,7 +23,7 @@ headers = {
     'Sec-Fetch-Mode': 'navigate',
     'Sec-Fetch-User': '?1',
     'Sec-Fetch-Dest': 'document',
-    'Referer': 'https://clslp.cat.com/tbr/main/forgotPassword.html',
+    'Referer': 'https://domain.com/tbr/main/forgotPassword.html',
     'Accept-Language': 'en-US,en;q=0.9',
 }
 
